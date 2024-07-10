@@ -1,28 +1,29 @@
 import * as THREE from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { Canvas, extend, useThree, useFrame } from '@react-three/fiber';
-import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
+import { useGLTF, useTexture, Environment, Lightformer, PerspectiveCamera, Center, RenderTexture, Text3D } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 
 extend({ MeshLineGeometry, MeshLineMaterial });
-useGLTF.preload('https://res.cloudinary.com/glovooker/image/upload/v1714363344/portfolio/custom-tag.glb');
-useTexture.preload('https://res.cloudinary.com/glovooker/image/upload/v1714362722/portfolio/band.jpg');
+useGLTF.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720619318/samples/badge_w0stp1.glb');
+useTexture.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720622516/samples/cam-band-texture_vdo6jy.png');
+useTexture.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720623823/samples/cam-badge-texture_f6w4do.png');
 
 export const InteractiveBadge = () => {
     return (
-        <div className={ 'w-full h-full' }>
-            <Canvas camera={ { position: [0, 0, 13], fov: 25 } }>
-                <ambientLight intensity={ Math.PI } />
-                <Physics interpolate gravity={ [0, -40, 0] } timeStep={ 1 / 60 }>
+        <div className={'w-full h-full'}>
+            <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
+                <ambientLight intensity={Math.PI} />
+                <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
                     <Band />
                 </Physics>
-                <Environment background blur={ 0.75 }>
-                    {/* <color attach="background" args={ ['black'] } /> */ }
-                    <Lightformer intensity={ 2 } color="white" position={ [0, -1, 5] } rotation={ [0, 0, Math.PI / 3] } scale={ [100, 0.1, 1] } />
-                    <Lightformer intensity={ 3 } color="white" position={ [-1, -1, 1] } rotation={ [0, 0, Math.PI / 3] } scale={ [100, 0.1, 1] } />
-                    <Lightformer intensity={ 3 } color="white" position={ [1, 1, 1] } rotation={ [0, 0, Math.PI / 3] } scale={ [100, 0.1, 1] } />
-                    <Lightformer intensity={ 10 } color="white" position={ [-10, 0, 14] } rotation={ [0, Math.PI / 2, Math.PI / 3] } scale={ [100, 10, 1] } />
+                <Environment background blur={0.75}>
+                    {/* <color attach="background" args={ ['black'] } /> */}
+                    <Lightformer intensity={2} color="white" position={[0, -1, 5]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={3} color="white" position={[-1, -1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={3} color="white" position={[1, 1, 1]} rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
+                    <Lightformer intensity={10} color="white" position={[-10, 0, 14]} rotation={[0, Math.PI / 2, Math.PI / 3]} scale={[100, 10, 1]} />
                 </Environment>
             </Canvas>
         </div>
@@ -33,8 +34,9 @@ const Band = ({ maxSpeed = 50, minSpeed = 10 }) => {
     const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef(); // prettier-ignore
     const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3(); // prettier-ignore
     const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 };
-    const { nodes, materials } = useGLTF('https://res.cloudinary.com/glovooker/image/upload/v1714363344/portfolio/custom-tag.glb');
-    const texture = useTexture('https://res.cloudinary.com/glovooker/image/upload/v1714362722/portfolio/band.jpg');
+    const { nodes, materials } = useGLTF('https://res.cloudinary.com/dctisdduk/image/upload/v1720619318/samples/badge_w0stp1.glb');
+    const badgeTexture = useTexture('https://res.cloudinary.com/dctisdduk/image/upload/v1720623823/samples/cam-badge-texture_f6w4do.png')
+    const bandTexture = useTexture('https://res.cloudinary.com/dctisdduk/image/upload/v1720622516/samples/cam-band-texture_vdo6jy.png');
     const { width, height } = useThree((state) => state.size);
     const [curve] = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
     const [dragged, drag] = useState(false);
@@ -81,41 +83,78 @@ const Band = ({ maxSpeed = 50, minSpeed = 10 }) => {
     });
 
     curve.curveType = 'chordal';
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    bandTexture.wrapS = bandTexture.wrapT = THREE.RepeatWrapping
+
+    const BadgeTexture = ({ user }) => {
+        return (
+            <>
+                <PerspectiveCamera makeDefault manual aspect={1.05} position={[0.49, 0.22, 2]} />
+                <mesh geometry={nodes.card.geometry}>
+                    <planeGeometry args={[0.95, -0.95 / 0.7]} />
+                    <meshBasicMaterial transparent={true} alphaMap={badgeTexture} side={THREE.BackSide} />
+                </mesh>
+                <Center position={[-0.22, 0.25, 0]}>
+                    <Text3D
+                        bevelEnabled={false}
+                        bevelSize={0}
+                        font="src/assets/Geist_Regular.json"
+                        height={0}
+                        size={0.07}
+                        rotation={[0, Math.PI, Math.PI]}>
+                        {user.firstName}
+                    </Text3D>
+                    <Text3D
+                        bevelEnabled={false}
+                        bevelSize={0}
+                        font="src/assets/Geist_Regular.json"
+                        height={0}
+                        size={0.07}
+                        position={[0, 0.09, 0]}
+                        rotation={[0, Math.PI, Math.PI]}>
+                        {user.lastName}
+                    </Text3D>
+                </Center>
+            </>
+        )
+    }
 
     return (
         <>
-            <group position={ [0, 4, 0] }>
-                <RigidBody ref={ fixed } { ...segmentProps } type="fixed" />
-                <RigidBody position={ [0.5, 0, 0] } ref={ j1 } { ...segmentProps }>
-                    <BallCollider args={ [0.1] } />
+            <group position={[0, 4, 0]}>
+                <RigidBody ref={fixed} {...segmentProps} type="fixed" />
+                <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+                    <BallCollider args={[0.1]} />
                 </RigidBody>
-                <RigidBody position={ [1, 0, 0] } ref={ j2 } { ...segmentProps }>
-                    <BallCollider args={ [0.1] } />
+                <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+                    <BallCollider args={[0.1]} />
                 </RigidBody>
-                <RigidBody position={ [1.5, 0, 0] } ref={ j3 } { ...segmentProps }>
-                    <BallCollider args={ [0.1] } />
+                <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+                    <BallCollider args={[0.1]} />
                 </RigidBody>
-                <RigidBody position={ [2, 0, 0] } ref={ card } { ...segmentProps } type={ dragged ? 'kinematicPosition' : 'dynamic' }>
-                    <CuboidCollider args={ [0.8, 1.125, 0.01] } />
+                <RigidBody position={[2, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+                    <CuboidCollider args={[0.8, 1.125, 0.01]} />
                     <group
-                        scale={ 2.25 }
-                        position={ [0, -1.2, -0.05] }
-                        onPointerOver={ () => hover(true) }
-                        onPointerOut={ () => hover(false) }
-                        onPointerUp={ (e) => (e.target.releasePointerCapture(e.pointerId), drag(false)) }
-                        onPointerDown={ (e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation())))) }>
-                        <mesh geometry={ nodes.card.geometry }>
-                            <meshPhysicalMaterial map={ materials["base.001"].map } map-anisotropy={ 16 } clearcoat={ 1 } clearcoatRoughness={ 0.15 } roughness={ 0.3 } metalness={ 0.5 } />
+                        scale={2.25}
+                        position={[0, -1.2, -0.05]}
+                        onPointerOver={() => hover(true)}
+                        onPointerOut={() => hover(false)}
+                        onPointerUp={(e) => (e.target.releasePointerCapture(e.pointerId), drag(false))}
+                        onPointerDown={(e) => (e.target.setPointerCapture(e.pointerId), drag(new THREE.Vector3().copy(e.point).sub(vec.copy(card.current.translation()))))}>
+                        <mesh geometry={nodes.card.geometry}>
+                            <meshPhysicalMaterial iridescence={1} iridescenceIOR={1} iridescenceThicknessRange={[0, 2400]} clearcoat={1} clearcoatRoughness={0.15} roughness={0.3} metalness={0.5}>
+                                <RenderTexture attach="map" height={2000} width={2000}>
+                                    <BadgeTexture user={{ firstName: "Hu", lastName: "Hongwei" }} />
+                                </RenderTexture>
+                            </meshPhysicalMaterial>
                         </mesh>
-                        <mesh geometry={ nodes.clip.geometry } material={ materials.metal } material-roughness={ 0.3 } />
-                        <mesh geometry={ nodes.clamp.geometry } material={ materials.metal } />
+                        <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
+                        <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
                     </group>
                 </RigidBody>
             </group>
-            <mesh ref={ band }>
+            <mesh ref={band}>
                 <meshLineGeometry />
-                <meshLineMaterial color="white" depthTest={ false } resolution={ [width, height] } useMap map={ texture } repeat={ [-3, 1] } lineWidth={ 1 } />
+                <meshLineMaterial color="white" depthTest={false} resolution={[width, height]} useMap map={bandTexture} repeat={[-3, 1]} lineWidth={1} />
             </mesh>
         </>
     );

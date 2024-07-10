@@ -26,7 +26,7 @@ const Hero: React.FC<Props> = (props) => {
                 <div className="w-1/2 flex flex-col relative z-20 mt-12">
                     <span className="w-20 h-2 bg-gradient-to-r from-glovooker-blue-100 to-glovooker-green-100 mb-12"></span>
                     <h1 className="font-circularblack md:text-3xl lg:text-7xl 2xl:text-8xl font-black flex flex-col leading-none bg-gradient-to-t from-glovooker-blue-100 to-glovooker-green-100 text-transparent bg-clip-text">
-                        Gabriel Lobo
+                        Hu Hongwei
                     </h1>
                     <TitleLoop />
                     <div className="flex mt-10 sm:mt-20 relative z-20">
