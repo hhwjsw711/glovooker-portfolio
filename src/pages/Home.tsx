@@ -8,6 +8,7 @@ import Portfolio from '../sections/Portfolio';
 import Carousel from '../sections/Carousel';
 import Contact from '../sections/Contact';
 import { Button } from '../components';
+import CreateBadge from '../sections/CreateBadge';
 
 export type SectionsReferences = {
     [key: string]: {
@@ -24,6 +25,7 @@ export const Home = () => {
     const aboutMeRef = useRef<HTMLElement>(null);
     const portfolioRef = useRef<HTMLElement>(null);
     const contactRef = useRef<HTMLElement>(null);
+    const createBadgeRef = useRef<HTMLElement>(null);
 
     const headerHeight = 96;
 
@@ -68,6 +70,23 @@ export const Home = () => {
                 });
             },
         },
+        createBadgeRef: {
+            ref: createBadgeRef,
+            scrollTo: () => {
+                const offset = (createBadgeRef.current?.getBoundingClientRect().top ?? 0) - headerHeight;
+                window.scrollTo({
+                    top: offset,
+                    behavior: 'smooth',
+                });
+            },
+        },
+    };
+
+    const initialName = { firstName: 'Hu', lastName: 'Hongwei' };
+    const [userData, setUserData] = useState(initialName);
+
+    const handleUserSubmit = (data: { firstName: string; lastName: string }) => {
+        setUserData(data);
     };
 
     useEffect(() => {
@@ -90,6 +109,8 @@ export const Home = () => {
     return (
         <div>
             <Hero
+                userData={ userData }
+                handleUserSubmit={ handleUserSubmit }
                 reference={ heroRef }
                 sectionsRef={ sectionsRef }
             />
@@ -103,6 +124,7 @@ export const Home = () => {
             />
             <Portfolio reference={ portfolioRef } />
             <Contact reference={ contactRef } sectionsRef={ sectionsRef } />
+            <CreateBadge onSubmit={handleUserSubmit} reference={ createBadgeRef } sectionsRef={ sectionsRef } />
 
             { showButton && (
                 <Button

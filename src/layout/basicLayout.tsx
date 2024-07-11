@@ -21,6 +21,10 @@ export const withBasicLayout = (Children: ChildrenComponent) => () => {
             label: `${ t('projects') }`,
             link: '#portfolio',
         },
+        {
+            label: `${ t('badge') }`,
+            link: '#badge',
+        },
     ];
 
     return (

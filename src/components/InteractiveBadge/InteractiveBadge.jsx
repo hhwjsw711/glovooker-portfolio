@@ -10,13 +10,13 @@ useGLTF.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720619318/s
 useTexture.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720622516/samples/cam-band-texture_vdo6jy.png');
 useTexture.preload('https://res.cloudinary.com/dctisdduk/image/upload/v1720623823/samples/cam-badge-texture_f6w4do.png');
 
-export const InteractiveBadge = () => {
+export const InteractiveBadge = ({ user }) => {
     return (
         <div className={'w-full h-full'}>
             <Canvas camera={{ position: [0, 0, 13], fov: 25 }}>
                 <ambientLight intensity={Math.PI} />
                 <Physics interpolate gravity={[0, -40, 0]} timeStep={1 / 60}>
-                    <Band />
+                    <Band user={user} />
                 </Physics>
                 <Environment background blur={0.75}>
                     {/* <color attach="background" args={ ['black'] } /> */}
@@ -30,7 +30,7 @@ export const InteractiveBadge = () => {
     );
 };
 
-const Band = ({ maxSpeed = 50, minSpeed = 10 }) => {
+const Band = ({ user, maxSpeed = 50, minSpeed = 10 }) => {
     const band = useRef(), fixed = useRef(), j1 = useRef(), j2 = useRef(), j3 = useRef(), card = useRef(); // prettier-ignore
     const vec = new THREE.Vector3(), ang = new THREE.Vector3(), rot = new THREE.Vector3(), dir = new THREE.Vector3(); // prettier-ignore
     const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 2, linearDamping: 2 };
@@ -85,7 +85,7 @@ const Band = ({ maxSpeed = 50, minSpeed = 10 }) => {
     curve.curveType = 'chordal';
     bandTexture.wrapS = bandTexture.wrapT = THREE.RepeatWrapping
 
-    const BadgeTexture = ({ user }) => {
+    const BadgeTexture = () => {
         return (
             <>
                 <PerspectiveCamera makeDefault manual aspect={1.05} position={[0.49, 0.22, 2]} />
@@ -143,7 +143,7 @@ const Band = ({ maxSpeed = 50, minSpeed = 10 }) => {
                         <mesh geometry={nodes.card.geometry}>
                             <meshPhysicalMaterial iridescence={1} iridescenceIOR={1} iridescenceThicknessRange={[0, 2400]} clearcoat={1} clearcoatRoughness={0.15} roughness={0.3} metalness={0.5}>
                                 <RenderTexture attach="map" height={2000} width={2000}>
-                                    <BadgeTexture user={{ firstName: "Hu", lastName: "Hongwei" }} />
+                                    <BadgeTexture />
                                 </RenderTexture>
                             </meshPhysicalMaterial>
                         </mesh>
