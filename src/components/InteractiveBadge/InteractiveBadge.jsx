@@ -97,7 +97,7 @@ const Band = ({ user, maxSpeed = 50, minSpeed = 10 }) => {
                     <Text3D
                         bevelEnabled={false}
                         bevelSize={0}
-                        font="src/assets/Geist_Regular.json"
+                        font="src/assets/HarmonyOS_Sans_SC_Regular.json"
                         height={0}
                         size={0.07}
                         rotation={[0, Math.PI, Math.PI]}>
@@ -106,7 +106,7 @@ const Band = ({ user, maxSpeed = 50, minSpeed = 10 }) => {
                     <Text3D
                         bevelEnabled={false}
                         bevelSize={0}
-                        font="src/assets/Geist_Regular.json"
+                        font="src/assets/HarmonyOS_Sans_SC_Regular.json"
                         height={0}
                         size={0.07}
                         position={[0, 0.09, 0]}

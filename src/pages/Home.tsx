@@ -82,7 +82,7 @@ export const Home = () => {
         },
     };
 
-    const initialName = { firstName: 'Hu', lastName: 'Hongwei' };
+    const initialName = { firstName: '胡', lastName: '洪伟' };
     const [userData, setUserData] = useState(initialName);
 
     const handleUserSubmit = (data: { firstName: string; lastName: string }) => {
