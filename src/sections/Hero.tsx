@@ -44,7 +44,7 @@ const Hero: React.FC<Props> = (props) => {
                 </div>
             </div>
             <div className="block w-full md:w-1/2 lg:1/2 xl:w-full h-full relative z-20">
-                <InteractiveBadge />
+                <InteractiveBadge user={{ firstName: "Hu", lastName: "Hongwei" }} />
             </div>
         </section>
     );
