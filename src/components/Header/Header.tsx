@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useTranslation } from 'react-i18next';
-import logo from '../../assets/img/logo.svg';
+import logo from '../../assets/img/png3.png';
 
 import { Dropdown } from '../';
 import { Link } from 'react-router-dom';
@@ -82,7 +82,7 @@ export const Header = (props: Props) => {
                                 to={ '.' }
                             >
                                 <img
-                                    className='h-12 w-12'
+                                    className='h-12 w-72'
                                     src={ logo }
                                     alt={ `${ t('logo_alt') }` }
                                 />
